@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-900: #1e3a8a;
+  
+  --color-dark-bg: #0f172a;
+  --color-dark-card: #1e293b;
+  --color-dark-border: #334155;
+  --color-dark-text: #f8fafc;
+  --color-dark-textmuted: #94a3b8;
+  --color-dark-textMuted: #94a3b8;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-dark-bg);
+    color: var(--color-dark-text);
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+  }
+  .btn-primary {
+    background-color: var(--color-primary-600);
+    color: white;
+  }
+  .btn-primary:hover {
+    background-color: var(--color-primary-500);
+  }
+  .btn-secondary {
+    background-color: var(--color-dark-card);
+    color: var(--color-dark-text);
+    border: 1px solid var(--color-dark-border);
+  }
+  .btn-secondary:hover {
+    background-color: var(--color-dark-border);
+  }
+  .input {
+    @apply w-full px-4 py-2 rounded-lg focus:outline-none transition-colors;
+    background-color: var(--color-dark-bg);
+    border: 1px solid var(--color-dark-border);
+    color: var(--color-dark-text);
+  }
+  .input:focus {
+    border-color: var(--color-primary-500);
+    box-shadow: 0 0 0 1px var(--color-primary-500);
+  }
+  .card {
+    @apply rounded-xl p-6 shadow-xl;
+    background-color: var(--color-dark-card);
+    border: 1px solid var(--color-dark-border);
+  }
+}
