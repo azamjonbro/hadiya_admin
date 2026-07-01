@@ -1,13 +1,18 @@
 import { useAppStore } from '../store/useStore';
-import { CheckCircle, Clock } from 'lucide-react';
+import CustomSelect from '../components/CustomSelect';
 
 export default function Orders() {
   const { orders, updateOrderStatus } = useAppStore();
 
-  const handleStatusChange = (id, currentStatus) => {
-    const newStatus = currentStatus === 'Kutilmoqda' ? 'Qabul qilindi' : 'Kutilmoqda';
+  const handleStatusChange = (id, newStatus) => {
     updateOrderStatus(id, newStatus);
   };
+
+  const statusOptions = [
+    { value: 'Kutilmoqda', label: 'Kutilmoqda' },
+    { value: 'Yetkazilmoqda', label: 'Yetkazilmoqda' },
+    { value: 'Yetkazib berildi', label: 'Yetkazib berildi' }
+  ];
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -39,19 +44,12 @@ export default function Orders() {
               <p><strong className="text-dark-text">Umumiy summa:</strong> <span className="text-primary-400 font-bold">${order.total}</span></p>
             </div>
 
-            <div className="flex gap-3">
-              <button 
-                onClick={() => handleStatusChange(order.id, order.status)}
-                className={`flex-1 btn ${
-                  order.status === 'Kutilmoqda' ? 'btn-primary' : 'btn-secondary'
-                } flex justify-center items-center gap-2`}
-              >
-                {order.status === 'Kutilmoqda' ? (
-                  <><CheckCircle className="w-4 h-4" /> Qabul qilish</>
-                ) : (
-                  <><Clock className="w-4 h-4" /> Kutilmoqda qilish</>
-                )}
-              </button>
+            <div className="flex justify-end pt-2">
+              <CustomSelect
+                options={statusOptions}
+                value={order.status}
+                onChange={(newStatus) => handleStatusChange(order.id, newStatus)}
+              />
             </div>
           </div>
         ))}

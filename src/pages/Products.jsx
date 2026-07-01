@@ -2,9 +2,10 @@ import { useState, useRef } from 'react';
 import { useAppStore } from '../store/useStore';
 import { useUIStore } from '../store/useUIStore';
 import { Plus, Trash2, Eye, Heart, Tag, UploadCloud, X, AlertTriangle } from 'lucide-react';
+import CustomSelect from '../components/CustomSelect';
 
 export default function Products() {
-  const { products, addProduct, deleteProduct } = useAppStore();
+  const { products, addProduct, deleteProduct, categories } = useAppStore();
   const { addToast } = useUIStore();
   
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -263,12 +264,13 @@ export default function Products() {
                 
                 <div>
                   <label className="block text-sm font-medium text-dark-textMuted mb-1">Kategoriya</label>
-                  <input 
-                    type="text" 
-                    className="input" 
-                    value={formData.category}
-                    onChange={(e) => setFormData({...formData, category: e.target.value})}
-                    placeholder="Premium"
+                  <CustomSelect 
+                    options={categories.length > 0 
+                      ? categories.map(c => ({ value: c.name, label: c.name }))
+                      : [{ value: 'Kategoriyasiz', label: 'Kategoriyasiz (Oldin kategoriya qoshing)' }]
+                    }
+                    value={formData.category || (categories[0]?.name || 'Kategoriyasiz')}
+                    onChange={(val) => setFormData({...formData, category: val})}
                   />
                 </div>
 
