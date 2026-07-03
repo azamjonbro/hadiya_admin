@@ -132,7 +132,7 @@ export default function ProductDetails() {
                       : 'border-dark-border hover:border-dark-textMuted'
                   }`}
                 >
-                  <img src={img} alt={`Thumb ${idx}`} className="w-full h-full object-cover" />
+                  <img src={resolveImage(img)} alt={`Thumb ${idx}`} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
@@ -321,7 +321,7 @@ export default function ProductDetails() {
                   onClick={() => { setActiveImgIndex(idx); setLightboxOpen(true); }}
                   className="rounded-xl overflow-hidden border border-dark-border/80 hover:border-primary-500/40 aspect-square cursor-zoom-in group bg-dark-bg relative transition-colors"
                 >
-                  <img src={img} alt={`Gallery grid ${idx}`} className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300" />
+                  <img src={resolveImage(img)} alt={`Gallery grid ${idx}`} className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300" />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <Eye className="w-5 h-5 text-white" />
                   </div>
