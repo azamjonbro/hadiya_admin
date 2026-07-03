@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore, useAppStore } from '../store/useStore';
 import { useUIStore } from '../store/useUIStore';
 import { Watch, LogIn } from 'lucide-react';
+import api from '../api';
 
 export default function Login() {
   const { login } = useAuthStore();
@@ -14,33 +15,51 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    const cleanUsername = username.trim().toLowerCase();
+    const cleanUsername = username.trim();
     const cleanPassword = password.trim();
 
-    const superAdminPassword = useAppStore.getState().superAdminPassword;
-
-    // Super Admin check
-    if (cleanUsername === 'admin' && cleanPassword === superAdminPassword) {
-      login({ id: 1, name: 'Asosiy Admin', role: 'super_admin' });
-      navigate('/');
-      addToast("Xush kelibsiz, Asosiy Admin!", "success");
+    if (!cleanUsername || !cleanPassword) {
+      setError("Iltimos, barcha maydonlarni to'ldiring!");
       return;
     }
 
-    // Manager check
-    const manager = managers.find(m => m.username.toLowerCase() === cleanUsername);
-    if (manager && manager.password === cleanPassword) {
+    try {
+      // 1. Try to login as Superadmin
+      try {
+        const response = await api.post('/superadmin/login', { username: cleanUsername, password: cleanPassword });
+        const { token, admin } = response.data;
+        localStorage.setItem('token', token);
+        
+        login({ id: admin.id, name: admin.name || 'Asosiy Admin', role: 'super_admin' });
+        navigate('/');
+        addToast("Xush kelibsiz, Asosiy Admin!", "success");
+        return;
+      } catch (err) {
+        // If user not found in superadmin, proceed to manager login. Else throw credentials check failed
+        if (err.response && err.response.status === 404) {
+          // continue
+        } else {
+          throw err;
+        }
+      }
+
+      // 2. Try to login as Manager
+      const response = await api.post('/manager/login', { username: cleanUsername, password: cleanPassword });
+      const { token, manager } = response.data;
+      localStorage.setItem('token', token);
+      
       login({ id: manager.id, name: manager.name, role: 'manager' });
       navigate('/products');
       addToast(`Xush kelibsiz, ${manager.name}!`, "success");
-      return;
+    } catch (err) {
+      console.error("Authentication failed:", err);
+      const msg = err.response?.data?.message || err.response?.data?.error || "Login yoki parol xato!";
+      setError(msg);
     }
-
-    setError("Login yoki parol xato!");
   };
 
   return (

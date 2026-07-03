@@ -36,7 +36,7 @@ export default function Settings() {
     addToast(e.target.checked ? "Bildirishnomalar yoqildi" : "Bildirishnomalar o'chirildi", "info");
   };
 
-  const handleChangePassword = (e) => {
+  const handleChangePassword = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess(false);
@@ -51,28 +51,25 @@ export default function Settings() {
       return;
     }
 
-    if (isSuperAdmin) {
-      if (passwords.current !== superAdminPassword) {
-        setError("Joriy parol xato!");
-        return;
+    try {
+      if (isSuperAdmin) {
+        // Superadmin ID is 1
+        await updateSuperAdminPassword(passwords.new);
+      } else {
+        await updateManagerPassword(user.id, passwords.new);
       }
-      updateSuperAdminPassword(passwords.new);
-    } else {
-      const manager = managers.find(m => m.id === user.id);
-      if (!manager || passwords.current !== manager.password) {
-        setError("Joriy parol xato!");
-        return;
-      }
-      updateManagerPassword(user.id, passwords.new);
-    }
 
-    setSuccess(true);
-    addToast("Parol muvaffaqiyatli o'zgartirildi!", "success");
-    setPasswords({ current: '', new: '', confirm: '' });
-    setTimeout(() => {
-      setIsPasswordModalOpen(false);
-      setSuccess(false);
-    }, 2000);
+      setSuccess(true);
+      addToast("Parol muvaffaqiyatli o'zgartirildi!", "success");
+      setPasswords({ current: '', new: '', confirm: '' });
+      setTimeout(() => {
+        setIsPasswordModalOpen(false);
+        setSuccess(false);
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to update password:", err);
+      setError(err.response?.data?.message || err.response?.data?.error || "Parolni o'zgartirishda xatolik yuz berdi!");
+    }
   };
 
   const handleLogoutAll = () => {
