@@ -18,10 +18,15 @@ export default function Products() {
     setDeleteModalOpen(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (productToDelete) {
-      deleteProduct(productToDelete);
-      addToast("Mahsulot muvaffaqiyatli o'chirildi", "info");
+      try {
+        await deleteProduct(productToDelete);
+        addToast("Mahsulot muvaffaqiyatli o'chirildi", "info");
+      } catch (err) {
+        console.error("Delete error:", err);
+        addToast("O'chirishda xatolik yuz berdi!", "error");
+      }
       setDeleteModalOpen(false);
       setProductToDelete(null);
     }

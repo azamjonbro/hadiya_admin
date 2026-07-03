@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../store/useStore';
 import { useUIStore } from '../store/useUIStore';
-import { ArrowLeft, Save, Sparkles } from 'lucide-react';
+import { ArrowLeft, Save, Sparkles, Loader2 } from 'lucide-react';
 import RichEditor from '../components/RichEditor';
 import ImageUploader from '../components/ImageUploader';
 import CharacteristicsInput from '../components/CharacteristicsInput';
@@ -12,6 +12,7 @@ export default function ProductCreate() {
   const navigate = useNavigate();
   const { addProduct, categories } = useAppStore();
   const { addToast } = useUIStore();
+  const [isSaving, setIsSaving] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -40,7 +41,7 @@ export default function ProductCreate() {
     addToast("SKU va Barcode generatsiya qilindi", "success");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.name || !formData.price || !formData.quantity) {
@@ -59,27 +60,36 @@ export default function ProductCreate() {
     const matchingCat = categories.find(c => c.name === formData.category);
     const catId = matchingCat ? matchingCat.id : 1;
 
-    addProduct({
-      name: formData.name,
-      sku: formData.sku,
-      barcode: formData.barcode,
-      brand: formData.brand,
-      category: formData.category,
-      categoryId: catId,
-      price: String(price),
-      saleprice: saleprice ? String(saleprice) : '',
-      salePercent: salePercent || 0,
-      quantity: String(formData.quantity),
-      unit: formData.unit,
-      status: formData.status,
-      shortDescription: formData.shortDescription,
-      fullDescription: formData.fullDescription,
-      images: formData.images.length > 0 ? formData.images : ['https://via.placeholder.com/600'],
-      characteristics: formData.characteristics
-    });
+    setIsSaving(true);
 
-    addToast("Mahsulot muvaffaqiyatli saqlandi!", "success");
-    navigate('/products');
+    try {
+      await addProduct({
+        name: formData.name,
+        sku: formData.sku,
+        barcode: formData.barcode,
+        brand: formData.brand,
+        category: formData.category,
+        categoryId: catId,
+        price: String(price),
+        saleprice: saleprice ? String(saleprice) : '',
+        salePercent: salePercent || 0,
+        quantity: String(formData.quantity),
+        unit: formData.unit,
+        status: formData.status,
+        shortDescription: formData.shortDescription,
+        fullDescription: formData.fullDescription,
+        images: formData.images.length > 0 ? formData.images : ['https://via.placeholder.com/600'],
+        characteristics: formData.characteristics
+      });
+
+      addToast("Mahsulot muvaffaqiyatli saqlandi!", "success");
+      navigate('/products');
+    } catch (err) {
+      console.error("Save product error:", err);
+      addToast(err.response?.data?.message || err.response?.data?.error || "Mahsulotni saqlashda xatolik yuz berdi!", "error");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const statusOptions = [
@@ -121,9 +131,15 @@ export default function ProductCreate() {
           </button>
           <button
             type="submit"
-            className="bg-primary-500 hover:bg-primary-600 text-white font-medium px-6 py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary-500/15 transition-all flex-1 sm:flex-initial"
+            disabled={isSaving}
+            className="bg-primary-500 hover:bg-primary-600 text-white font-medium px-6 py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary-500/15 hover:shadow-primary-500/25 transition-all flex-1 sm:flex-initial disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Save className="w-4 h-4" /> Saqlash
+            {isSaving ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Save className="w-4 h-4" />
+            )}
+            {isSaving ? "Saqlanmoqda..." : "Saqlash"}
           </button>
         </div>
       </div>

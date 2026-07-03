@@ -2,6 +2,51 @@ import { useState, useRef } from 'react';
 import { UploadCloud, X, ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import { useUIStore } from '../store/useUIStore';
 
+const compressImage = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 1200; // Optimal size for high-res watch detail
+        const MAX_HEIGHT = 1200;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        // Paint background white (useful if compressing PNG with transparency to JPEG)
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Convert to Base64 JPEG at 85% quality to drastically reduce size (10MB -> ~200KB)
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        resolve(dataUrl);
+      };
+      img.onerror = (err) => reject(err);
+      img.src = event.target.result;
+    };
+    reader.onerror = (err) => reject(err);
+    reader.readAsDataURL(file);
+  });
+};
+
 export default function ImageUploader({ images, onChange, label }) {
   const [isDragActive, setIsDragActive] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -28,36 +73,32 @@ export default function ImageUploader({ images, onChange, label }) {
     }
 
     setUploading(true);
-    setProgress(0);
+    setProgress(15);
 
-    // Simulate premium upload progress
-    let currentProgress = 0;
     const interval = setInterval(() => {
-      currentProgress += 10;
-      setProgress(currentProgress);
-      
-      if (currentProgress >= 100) {
-        clearInterval(interval);
-        
-        let loadedCount = 0;
-        const newBase64Images = [];
+      setProgress(prev => {
+        if (prev >= 90) return 90;
+        return prev + 5;
+      });
+    }, 100);
 
-        validImageFiles.forEach(file => {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            newBase64Images.push(reader.result);
-            loadedCount++;
-            
-            if (loadedCount === validImageFiles.length) {
-              onChange([...images, ...newBase64Images]);
-              setUploading(false);
-              addToast(`${validImageFiles.length} ta rasm muvaffaqiyatli yuklandi!`, "success");
-            }
-          };
-          reader.readAsDataURL(file);
-        });
-      }
-    }, 80);
+    Promise.all(validImageFiles.map(file => compressImage(file)))
+      .then(compressedImages => {
+        clearInterval(interval);
+        setProgress(100);
+        
+        setTimeout(() => {
+          onChange([...images, ...compressedImages]);
+          setUploading(false);
+          addToast(`${validImageFiles.length} ta rasm yuklandi va muvaffaqiyatli siqildi!`, "success");
+        }, 200);
+      })
+      .catch(err => {
+        clearInterval(interval);
+        setUploading(false);
+        console.error("Compression error:", err);
+        addToast("Rasmni qayta ishlashda xatolik yuz berdi!", "error");
+      });
   };
 
   const handleDrop = (e) => {
