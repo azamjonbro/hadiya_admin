@@ -223,6 +223,8 @@ export default function Products() {
               </button>
             </div>
           </div>
+        </div>
+      )}
       {/* Product Edit Modal */}
       <ProductEditModal 
         product={productToEdit} 
