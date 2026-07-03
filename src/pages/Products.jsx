@@ -52,6 +52,14 @@ export default function Products() {
     }
   };
 
+  const BACKEND_URL = 'https://soat.techinfo.uz';
+  const resolveImage = (img) => {
+    if (!img) return 'https://via.placeholder.com/400';
+    if (img.startsWith('http') || img.startsWith('data:image')) return img;
+    if (img.startsWith('/uploads/')) return `${BACKEND_URL}${img}`;
+    return `${BACKEND_URL}/uploads/${img}`;
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-dark-border pb-5">
@@ -70,8 +78,8 @@ export default function Products() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map(product => {
           const hasMultipleImages = product.images && product.images.length > 1;
-          const coverImage = product.images?.[0] || 'https://via.placeholder.com/400';
-          const hoverImage = hasMultipleImages ? product.images[1] : null;
+          const coverImage = resolveImage(product.images?.[0]);
+          const hoverImage = hasMultipleImages ? resolveImage(product.images[1]) : null;
 
           return (
             <div 

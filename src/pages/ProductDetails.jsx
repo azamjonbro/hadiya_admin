@@ -14,6 +14,14 @@ export default function ProductDetails() {
 
   const product = products.find(p => p.id === Number(id));
 
+  const BACKEND_URL = 'https://soat.techinfo.uz';
+  const resolveImage = (img) => {
+    if (!img) return 'https://via.placeholder.com/400';
+    if (img.startsWith('http') || img.startsWith('data:image')) return img;
+    if (img.startsWith('/uploads/')) return `${BACKEND_URL}${img}`;
+    return `${BACKEND_URL}/uploads/${img}`;
+  };
+
   // State hooks
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const [activeTab, setActiveTab] = useState('description'); // 'description' | 'characteristics' | 'gallery' | 'history'
@@ -91,7 +99,7 @@ export default function ProductDetails() {
             className="relative rounded-2xl overflow-hidden border border-dark-border aspect-[4/3] bg-dark-card group cursor-zoom-in"
           >
             <img 
-              src={product.images[activeImgIndex]} 
+              src={resolveImage(product.images[activeImgIndex])} 
               alt={product.name} 
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
             />
