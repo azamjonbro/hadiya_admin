@@ -7,7 +7,8 @@ import {
   ShoppingCart, 
   Settings,
   Image as ImageIcon,
-  Tags
+  Tags,
+  Watch
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -32,10 +33,15 @@ export default function Sidebar() {
   return (
     <aside className="fixed bottom-0 left-0 right-0 z-50 w-full bg-dark-card border-t border-dark-border md:relative md:w-64 md:h-screen md:border-r md:border-t-0 md:flex md:flex-col shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] md:shadow-none">
       <div className="hidden md:block p-6">
-        <h1 className="text-2xl font-bold text-primary-500 tracking-tight">AdminPanel</h1>
-        <p className="text-sm text-dark-textMuted mt-1">
-          {isSuperAdmin ? 'Super Admin' : 'Manager'} paneli
-        </p>
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 bg-primary-500/10 text-primary-500 border border-primary-500/20 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/5">
+            <Watch className="w-5 h-5 animate-pulse" />
+          </div>
+          <div>
+            <h1 className="text-base font-bold text-white tracking-tight leading-none">SoatShop</h1>
+            <span className="text-[10px] text-primary-400 font-bold uppercase tracking-widest mt-1 block">Admin</span>
+          </div>
+        </div>
       </div>
 
       <nav className="flex items-center justify-around md:flex-1 md:flex-col md:justify-start md:px-4 md:space-y-2 md:mt-4 p-2 md:p-0 w-full overflow-x-auto">

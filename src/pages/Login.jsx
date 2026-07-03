@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore, useAppStore } from '../store/useStore';
 import { useUIStore } from '../store/useUIStore';
-import { ShieldCheck, LogIn } from 'lucide-react';
+import { Watch, LogIn } from 'lucide-react';
 
 export default function Login() {
   const { login } = useAuthStore();
@@ -47,10 +47,10 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-dark-bg p-4">
       <div className="card w-full max-w-md text-center space-y-8 animate-in fade-in zoom-in-95 duration-300">
         <div>
-          <div className="w-16 h-16 bg-primary-500/10 text-primary-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <ShieldCheck className="w-8 h-8" />
+          <div className="w-16 h-16 bg-primary-500/10 text-primary-500 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-primary-500/20 shadow-lg shadow-primary-500/5">
+            <Watch className="w-8 h-8 animate-pulse" />
           </div>
-          <h1 className="text-3xl font-bold text-dark-text mb-2">Tizimga Kirish</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">SoatShop</h1>
           <p className="text-dark-textMuted text-sm">
             Admin: <strong>admin</strong> / Birlamchi parol: <strong>123</strong> <br />
             Menajer: Qo'shilgan Username va Parol orqali

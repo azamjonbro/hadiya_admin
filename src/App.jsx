@@ -5,6 +5,8 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Managers from './pages/Managers';
 import Products from './pages/Products';
+import ProductCreate from './pages/ProductCreate';
+import ProductDetails from './pages/ProductDetails';
 import Orders from './pages/Orders';
 import Settings from './pages/Settings';
 import Categories from './pages/Categories';
@@ -22,6 +24,8 @@ export default function App() {
         {/* Protected Routes */}
         <Route element={<Layout />}>
           <Route path="/products" element={<Products />} />
+          <Route path="/products/create" element={<ProductCreate />} />
+          <Route path="/products/:id" element={<ProductDetails />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/categories" element={<Categories />} />
         </Route>
