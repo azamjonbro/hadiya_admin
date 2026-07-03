@@ -48,6 +48,14 @@ const compressImage = (file) => {
 };
 
 export default function ImageUploader({ images, onChange, label }) {
+  const BACKEND_URL = 'https://soat.techinfo.uz';
+  const resolveImage = (img) => {
+    if (!img) return 'https://via.placeholder.com/400';
+    if (img.startsWith('http') || img.startsWith('data:image')) return img;
+    if (img.startsWith('/uploads/')) return `${BACKEND_URL}${img}`;
+    return `${BACKEND_URL}/uploads/${img}`;
+  };
+
   const [isDragActive, setIsDragActive] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -194,7 +202,7 @@ export default function ImageUploader({ images, onChange, label }) {
                 index === 0 ? 'ring-2 ring-primary-500/60 ring-offset-2 ring-offset-dark-bg' : ''
               }`}
             >
-              <img src={img} alt={`Preview ${index}`} className="w-full h-full object-cover" />
+              <img src={resolveImage(img)} alt={`Preview ${index}`} className="w-full h-full object-cover" />
               
               {/* Cover badge */}
               {index === 0 && (
