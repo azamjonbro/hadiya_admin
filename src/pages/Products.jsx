@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../store/useStore';
 import { useUIStore } from '../store/useUIStore';
-import { Plus, Trash2, Eye, Heart, Tag, AlertTriangle } from 'lucide-react';
+import { Plus, Trash2, Eye, Heart, Tag, AlertTriangle, Pencil } from 'lucide-react';
+import ProductEditModal from '../components/ProductEditModal';
 
 export default function Products() {
   const navigate = useNavigate();
@@ -11,6 +12,9 @@ export default function Products() {
   
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
+  
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [productToEdit, setProductToEdit] = useState(null);
 
   const openDeleteModal = (e, id) => {
     e.stopPropagation(); // Prevent card click event
@@ -121,6 +125,19 @@ export default function Products() {
                   </div>
                 )}
 
+                {/* Quick Edit button */}
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setProductToEdit(product);
+                    setEditModalOpen(true);
+                  }}
+                  className="absolute top-3 right-12 p-2 bg-primary-500/85 text-white hover:bg-primary-600 rounded-lg opacity-0 group-hover:opacity-100 transition-all backdrop-blur-sm z-20 shadow-md"
+                  title="Tahrirlash"
+                >
+                  <Pencil className="w-4 h-4" />
+                </button>
+
                 {/* Quick Delete button */}
                 <button 
                   onClick={(e) => openDeleteModal(e, product.id)}
@@ -206,8 +223,15 @@ export default function Products() {
               </button>
             </div>
           </div>
-        </div>
-      )}
+      {/* Product Edit Modal */}
+      <ProductEditModal 
+        product={productToEdit} 
+        isOpen={editModalOpen} 
+        onClose={() => {
+          setEditModalOpen(false);
+          setProductToEdit(null);
+        }} 
+      />
     </div>
   );
 }
