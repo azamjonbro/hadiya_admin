@@ -61,6 +61,8 @@ export default function ImageUploader({ images, onChange, label }) {
   const [progress, setProgress] = useState(0);
   const fileInputRef = useRef(null);
   const { addToast } = useUIStore();
+  
+  const [isGlobalDragActive, setIsGlobalDragActive] = useState(false);
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -108,6 +110,58 @@ export default function ImageUploader({ images, onChange, label }) {
         addToast("Rasmni qayta ishlashda xatolik yuz berdi!", "error");
       });
   };
+
+  const dragCounter = useRef(0);
+
+  useEffect(() => {
+    const handleGlobalDragEnter = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.dataTransfer.types.includes('Files')) {
+        dragCounter.current++;
+        if (dragCounter.current === 1) {
+          setIsGlobalDragActive(true);
+        }
+      }
+    };
+
+    const handleGlobalDragLeave = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dragCounter.current--;
+      if (dragCounter.current === 0) {
+        setIsGlobalDragActive(false);
+      }
+    };
+
+    const handleGlobalDragOver = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    const handleGlobalDrop = async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsGlobalDragActive(false);
+      dragCounter.current = 0;
+
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        processFiles(e.dataTransfer.files);
+      }
+    };
+
+    window.addEventListener('dragenter', handleGlobalDragEnter);
+    window.addEventListener('dragleave', handleGlobalDragLeave);
+    window.addEventListener('dragover', handleGlobalDragOver);
+    window.addEventListener('drop', handleGlobalDrop);
+
+    return () => {
+      window.removeEventListener('dragenter', handleGlobalDragEnter);
+      window.removeEventListener('dragleave', handleGlobalDragLeave);
+      window.removeEventListener('dragover', handleGlobalDragOver);
+      window.removeEventListener('drop', handleGlobalDrop);
+    };
+  }, [images, onChange]);
 
   const handleDrop = (e) => {
     e.preventDefault();
