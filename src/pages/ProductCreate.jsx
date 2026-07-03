@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAppStore } from '../store/useStore';
 import { useUIStore } from '../store/useUIStore';
 import { ArrowLeft, Save, Sparkles, Loader2 } from 'lucide-react';
@@ -10,7 +10,9 @@ import CustomSelect from '../components/CustomSelect';
 
 export default function ProductCreate() {
   const navigate = useNavigate();
-  const { addProduct, categories } = useAppStore();
+  const { id } = useParams();
+  const isEdit = !!id;
+  const { addProduct, updateProduct, products, categories } = useAppStore();
   const { addToast } = useUIStore();
   const [isSaving, setIsSaving] = useState(false);
 
@@ -31,6 +33,31 @@ export default function ProductCreate() {
     images: [],
     characteristics: []
   });
+
+  useEffect(() => {
+    if (isEdit && products.length > 0) {
+      const existingProduct = products.find(p => p.id === Number(id));
+      if (existingProduct) {
+        setFormData({
+          name: existingProduct.name || '',
+          sku: existingProduct.sku || '',
+          barcode: existingProduct.barcode || '',
+          brand: existingProduct.brand || '',
+          category: existingProduct.category || '',
+          categoryId: existingProduct.categoryId || 1,
+          price: existingProduct.price || '',
+          saleprice: existingProduct.saleprice || '',
+          quantity: existingProduct.quantity || '',
+          unit: existingProduct.unit || 'dona',
+          status: existingProduct.status || 'Active',
+          shortDescription: existingProduct.shortDescription || '',
+          fullDescription: existingProduct.fullDescription || '',
+          images: existingProduct.images || [],
+          characteristics: existingProduct.characteristics || []
+        });
+      }
+    }
+  }, [id, isEdit, products]);
 
   const generateSKUAndBarcode = () => {
     const randomNum = Math.floor(100000 + Math.random() * 900000);

@@ -108,6 +108,22 @@ export const useAppStore = create((set, get) => ({
     }
   },
 
+  updateProduct: async (id, product) => {
+    try {
+      const payload = {
+        ...product,
+        images: JSON.stringify(product.images),
+        characteristics: JSON.stringify(product.characteristics),
+        status: String(product.status)
+      };
+      await api.put(`/product/${id}`, payload);
+      await get().fetchProducts();
+    } catch (error) {
+      console.error("updateProduct error:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+
   deleteProduct: async (id) => {
     try {
       await api.delete(`/product/${id}`);
