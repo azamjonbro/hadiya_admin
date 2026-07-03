@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import api from '../api';
 
 export const useAuthStore = create(
   persist(
@@ -14,122 +15,248 @@ export const useAuthStore = create(
   )
 );
 
-const initialProducts = [
-  {
-    id: 1,
-    name: 'Rolex Submariner Date',
-    sku: 'RLX-SUB-126610',
-    barcode: '840029381023',
-    brand: 'Rolex',
-    category: 'Premium',
-    categoryId: 1,
-    price: '15000',
-    saleprice: '14200',
-    salePercent: 5,
-    quantity: '12',
-    unit: 'dona',
-    status: 'Active', // Active, Draft, Out of Stock
-    shortDescription: 'Monochrome luxury diver watch in Oystersteel with black dial and Cerachrom bezel.',
-    fullDescription: '<h1>Rolex Submariner Date</h1><p>The Rolex Submariner Date in Oystersteel with a Cerachrom insert in black ceramic and a black dial with large luminescent hour markers.</p><h3>Key Features</h3><ul><li>Oystersteel resistant to corrosion.</li><li>Unidirectional rotatable bezel with 60-minute graduation.</li><li>Waterproof to 300 metres / 1,000 feet.</li></ul>',
-    characteristics: [
-      { name: 'Model', value: 'Submariner Date' },
-      { name: 'Case diameter', value: '41 mm' },
-      { name: 'Material', value: 'Oystersteel' },
-      { name: 'Bezel', value: 'Unidirectional rotatable 60-minute' },
-      { name: 'Dial', value: 'Black Cerachrom' },
-      { name: 'Power reserve', value: '70 hours' },
-      { name: 'Water resistance', value: '300 m (1,000 ft)' },
-      { name: 'Warranty', value: '5 Years' }
-    ],
-    images: [
-      'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=600&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=600&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1622434641406-a158123450f9?q=80&w=600&auto=format&fit=crop'
-    ],
-    likes: '125',
-    history: { views: 1540 }
-  },
-  {
-    id: 2,
-    name: 'Omega Speedmaster Professional',
-    sku: 'OMG-SPD-31030',
-    barcode: '761325893012',
-    brand: 'Omega',
-    category: 'Premium',
-    categoryId: 1,
-    price: '7600',
-    saleprice: '',
-    salePercent: 0,
-    quantity: '0',
-    unit: 'dona',
-    status: 'Out of Stock',
-    shortDescription: 'The legendary Moonwatch chronograph, a true icon of space exploration.',
-    fullDescription: '<h2>The Legendary Moonwatch</h2><p>The Omega Speedmaster Professional Co-Axial Master Chronometer Chronograph is one of the world’s most iconic timepieces. Having been a part of all six lunar missions, the legendary chronograph is an impressive representation of the brand’s adventurous pioneering spirit.</p>',
-    characteristics: [
-      { name: 'Model', value: 'Speedmaster Moonwatch' },
-      { name: 'Case diameter', value: '42 mm' },
-      { name: 'Material', value: 'Stainless Steel' },
-      { name: 'Caliber', value: 'Omega 3861' },
-      { name: 'Glass', value: 'Hesalite' },
-      { name: 'Power reserve', value: '50 hours' },
-      { name: 'Warranty', value: '5 Years' }
-    ],
-    images: [
-      'https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=600&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=600&auto=format&fit=crop'
-    ],
-    likes: '89',
-    history: { views: 980 }
-  }
-];
+export const useAppStore = create((set, get) => ({
+  superAdminPassword: '123',
+  products: [],
+  orders: [],
+  managers: [],
+  categories: [],
+  loading: false,
 
-const initialOrders = [
-  { id: 101, customerName: 'Ali Valiyev', address: 'Toshkent, Yunusobod', phone: '+998901234567', total: 1200, status: 'Kutilmoqda', date: '2026-07-01' },
-];
+  updateSuperAdminPassword: (newPassword) => set({ superAdminPassword: newPassword }),
 
-const initialManagers = [
-  { id: 1, name: 'Sardor Manager', username: 'sardor', password: '123' },
-];
-
-const initialCategories = [
-  { id: 1, name: 'Premium' },
-  { id: 2, name: 'Classic' },
-  { id: 3, name: 'Sport' }
-];
-
-export const useAppStore = create(
-  persist(
-    (set) => ({
-      superAdminPassword: '123',
-      products: initialProducts,
-      orders: initialOrders,
-      managers: initialManagers,
-      categories: initialCategories,
-      
-      updateSuperAdminPassword: (newPassword) => set({ superAdminPassword: newPassword }),
-      
-      addProduct: (product) => set((state) => ({ products: [...state.products, { id: Date.now(), likes: '0', history: { views: 0 }, ...product }] })),
-      deleteProduct: (id) => set((state) => ({ products: state.products.filter(p => p.id !== id) })),
-      
-      addOrder: (order) => set((state) => ({ orders: [...state.orders, { id: Date.now(), ...order }] })),
-      updateOrderStatus: (id, status) => set((state) => ({
-        orders: state.orders.map(o => o.id === id ? { ...o, status } : o)
-      })),
-      
-      addManager: (manager) => set((state) => ({ managers: [...state.managers, { id: Date.now(), ...manager }] })),
-      deleteManager: (id) => set((state) => ({ managers: state.managers.filter(m => m.id !== id) })),
-      updateManager: (id, updatedData) => set((state) => ({
-        managers: state.managers.map(m => m.id === id ? { ...m, ...updatedData } : m)
-      })),
-
-      addCategory: (category) => set((state) => ({ categories: [...state.categories, { id: Date.now(), ...category }] })),
-      deleteCategory: (id) => set((state) => ({ categories: state.categories.filter(c => c.id !== id) })),
-      updateCategory: (id, updatedData) => set((state) => ({
-        categories: state.categories.map(c => c.id === id ? { ...c, ...updatedData } : c)
-      })),
-    }),
-    {
-      name: 'app-storage',
+  // 1. Fetching all initial data in parallel
+  fetchInitialData: async () => {
+    set({ loading: true });
+    try {
+      await Promise.all([
+        get().fetchCategories(),
+        get().fetchProducts(),
+        get().fetchManagers(),
+        get().fetchOrders()
+      ]);
+    } catch (err) {
+      console.error("Failed to load initial backend data:", err);
+    } finally {
+      set({ loading: false });
     }
-  )
-);
+  },
+
+  // 2. Product API Actions
+  fetchProducts: async () => {
+    try {
+      const response = await api.get('/product');
+      // Backend returns raw products. Map and parse JSON fields like images and characteristics
+      const mapped = response.data.map(p => {
+        let parsedImages = [];
+        try {
+          parsedImages = typeof p.images === 'string' ? JSON.parse(p.images) : (p.images || []);
+        } catch (e) {
+          parsedImages = [p.images];
+        }
+
+        let parsedSpecs = [];
+        try {
+          parsedSpecs = typeof p.characteristics === 'string' ? JSON.parse(p.characteristics) : (p.characteristics || []);
+        } catch (e) {
+          parsedSpecs = [];
+        }
+
+        return {
+          ...p,
+          images: parsedImages,
+          characteristics: parsedSpecs
+        };
+      });
+      set({ products: mapped });
+    } catch (error) {
+      console.error("fetchProducts error:", error);
+    }
+  },
+
+  addProduct: async (product) => {
+    try {
+      // Send payload with serialized JSON fields to be fully compliant with backend model
+      const payload = {
+        ...product,
+        images: JSON.stringify(product.images),
+        characteristics: JSON.stringify(product.characteristics),
+        status: String(product.status)
+      };
+      await api.post('/product', payload);
+      await get().fetchProducts();
+    } catch (error) {
+      console.error("addProduct error:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+
+  deleteProduct: async (id) => {
+    try {
+      await api.delete(`/product/${id}`);
+      await get().fetchProducts();
+    } catch (error) {
+      console.error("deleteProduct error:", error);
+      throw error;
+    }
+  },
+
+  // 3. Category API Actions
+  fetchCategories: async () => {
+    try {
+      const response = await api.get('/category');
+      set({ categories: response.data });
+    } catch (error) {
+      console.error("fetchCategories error:", error);
+    }
+  },
+
+  addCategory: async (category) => {
+    try {
+      await api.post('/category', category);
+      await get().fetchCategories();
+    } catch (error) {
+      console.error("addCategory error:", error);
+      throw error;
+    }
+  },
+
+  deleteCategory: async (id) => {
+    try {
+      await api.delete(`/category/${id}`);
+      await get().fetchCategories();
+    } catch (error) {
+      console.error("deleteCategory error:", error);
+      throw error;
+    }
+  },
+
+  updateCategory: async (id, updatedData) => {
+    try {
+      await api.put(`/category/${id}`, updatedData);
+      await get().fetchCategories();
+    } catch (error) {
+      console.error("updateCategory error:", error);
+      throw error;
+    }
+  },
+
+  // 4. Manager API Actions
+  fetchManagers: async () => {
+    try {
+      const response = await api.get('/manager');
+      set({ managers: response.data });
+    } catch (error) {
+      console.error("fetchManagers error:", error);
+    }
+  },
+
+  addManager: async (manager) => {
+    try {
+      await api.post('/manager', {
+        ...manager,
+        status: true,
+        superadminId: 1
+      });
+      await get().fetchManagers();
+    } catch (error) {
+      console.error("addManager error:", error);
+      throw error;
+    }
+  },
+
+  deleteManager: async (id) => {
+    try {
+      await api.delete(`/manager/${id}`);
+      await get().fetchManagers();
+    } catch (error) {
+      console.error("deleteManager error:", error);
+      throw error;
+    }
+  },
+
+  updateManager: async (id, updatedData) => {
+    try {
+      await api.put(`/manager/${id}`, updatedData);
+      await get().fetchManagers();
+    } catch (error) {
+      console.error("updateManager error:", error);
+      throw error;
+    }
+  },
+
+  // 5. Order (HistoryModel) API Actions
+  fetchOrders: async () => {
+    try {
+      const response = await api.get('/orderhistory');
+      const mapped = response.data.map(item => {
+        let address = '';
+        let status = 'Kutilmoqda';
+        
+        if (item.history) {
+          try {
+            const parsed = typeof item.history === 'string' ? JSON.parse(item.history) : item.history;
+            address = parsed.address || '';
+            status = parsed.status || 'Kutilmoqda';
+          } catch (e) {
+            address = item.history;
+          }
+        }
+
+        const user = item.User || {};
+        const product = item.Product || {};
+        
+        const customerName = user.firstName && user.lastName 
+          ? `${user.firstName} ${user.lastName}` 
+          : (user.firstName || 'Mijoz');
+          
+        const priceVal = Number(product.saleprice || product.price) || 0;
+        const total = priceVal * (Number(item.quantity) || 1);
+
+        return {
+          id: item.id,
+          customerName,
+          address: address || user.phone || 'Noma\'lum',
+          phone: user.phone || 'Noma\'lum',
+          total,
+          status,
+          date: new Date(item.createdAt).toISOString().split('T')[0],
+          raw: item
+        };
+      });
+      set({ orders: mapped });
+    } catch (error) {
+      console.error("fetchOrders error:", error);
+    }
+  },
+
+  updateOrderStatus: async (id, newStatus) => {
+    try {
+      const orders = get().orders;
+      const order = orders.find(o => o.id === id);
+      if (!order) return;
+
+      const raw = order.raw;
+      let historyObj = {};
+      
+      if (raw.history) {
+        try {
+          historyObj = typeof raw.history === 'string' ? JSON.parse(raw.history) : raw.history;
+        } catch (e) {
+          historyObj = { message: raw.history };
+        }
+      }
+      
+      historyObj.status = newStatus;
+
+      await api.put(`/orderhistory/${id}`, {
+        history: JSON.stringify(historyObj)
+      });
+      
+      await get().fetchOrders();
+    } catch (error) {
+      console.error("updateOrderStatus error:", error);
+      throw error;
+    }
+  }
+}));

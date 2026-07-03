@@ -1,10 +1,18 @@
+import { useEffect } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
-import { useAuthStore } from '../store/useStore';
+import { useAuthStore, useAppStore } from '../store/useStore';
 
 export default function Layout({ adminOnly = false }) {
   const { user } = useAuthStore();
+  const { fetchInitialData } = useAppStore();
+
+  useEffect(() => {
+    if (user) {
+      fetchInitialData();
+    }
+  }, [user, fetchInitialData]);
 
   if (!user) {
     return <Navigate to="/login" replace />;
