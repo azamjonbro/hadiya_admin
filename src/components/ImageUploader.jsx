@@ -305,6 +305,47 @@ export default function ImageUploader({ images, onChange, label }) {
           ))}
         </div>
       )}
+      
+      {isGlobalDragActive && (
+        <div 
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(9, 13, 22, 0.85)',
+            backdropFilter: 'blur(8px)',
+            zIndex: 9999,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#ffffff',
+            pointerEvents: 'none'
+          }}
+          className="animate-in fade-in duration-200"
+        >
+          <div 
+            style={{
+              border: '3px dashed #bfa00d',
+              borderRadius: '24px',
+              padding: '3.5rem',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '1.5rem',
+              maxWidth: '520px',
+              textAlign: 'center',
+              backgroundColor: 'rgba(30, 41, 59, 0.3)'
+            }}
+          >
+            <UploadCloud className="w-16 h-16 text-primary-500 animate-bounce" style={{ color: '#bfa00d' }} />
+            <h3 className="text-2xl font-bold text-white">Rasmlarni istalgan joyga tashlang</h3>
+            <p className="text-sm text-dark-textMuted leading-relaxed">
+              Fayllarni yuklash uchun sichqonchani qo'yib yuboring. Rasmlar avtomatik ravishda siqiladi va qo'shiladi.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
