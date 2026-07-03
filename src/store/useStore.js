@@ -23,7 +23,24 @@ export const useAppStore = create((set, get) => ({
   categories: [],
   loading: false,
 
-  updateSuperAdminPassword: (newPassword) => set({ superAdminPassword: newPassword }),
+  updateSuperAdminPassword: async (newPassword) => {
+    try {
+      await api.put('/superadmin/1', { password: newPassword });
+      set({ superAdminPassword: newPassword });
+    } catch (error) {
+      console.error("updateSuperAdminPassword error:", error);
+      throw error;
+    }
+  },
+
+  updateManagerPassword: async (id, password) => {
+    try {
+      await api.put(`/manager/${id}`, { password });
+    } catch (error) {
+      console.error("updateManagerPassword error:", error);
+      throw error;
+    }
+  },
 
   // 1. Fetching all initial data in parallel
   fetchInitialData: async () => {
