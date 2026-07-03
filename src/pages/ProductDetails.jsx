@@ -374,7 +374,7 @@ export default function ProductDetails() {
           {/* Lightbox viewport */}
           <div className="max-w-4xl max-h-[80vh] w-full flex items-center justify-center">
             <img 
-              src={product.images[activeImgIndex]} 
+              src={resolveImage(product.images[activeImgIndex])} 
               alt="Fullscreen View" 
               className="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl border border-dark-border"
             />
@@ -391,7 +391,7 @@ export default function ProductDetails() {
                     idx === activeImgIndex ? 'border-primary-500 scale-102 ring-2 ring-primary-500/30' : 'border-dark-border/50'
                   }`}
                 >
-                  <img src={img} alt={`Thumb lightbox ${idx}`} className="w-full h-full object-cover" />
+                  <img src={resolveImage(img)} alt={`Thumb lightbox ${idx}`} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
