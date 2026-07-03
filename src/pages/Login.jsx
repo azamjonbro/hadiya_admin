@@ -69,7 +69,7 @@ export default function Login() {
           <div className="w-16 h-16 bg-primary-500/10 text-primary-500 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-primary-500/20 shadow-lg shadow-primary-500/5">
             <Watch className="w-8 h-8 animate-pulse" />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">SoatShop</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">Alharameen</h1>
           <p className="text-dark-textMuted text-sm">
             Admin: <strong>admin</strong> / Birlamchi parol: <strong>123</strong> <br />
             Menajer: Qo'shilgan Username va Parol orqali
