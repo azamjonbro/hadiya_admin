@@ -90,7 +90,7 @@ export default function ProductCreate() {
     setIsSaving(true);
 
     try {
-      await addProduct({
+      const payload = {
         name: formData.name,
         sku: formData.sku,
         barcode: formData.barcode,
@@ -107,9 +107,15 @@ export default function ProductCreate() {
         fullDescription: formData.fullDescription,
         images: formData.images.length > 0 ? formData.images : ['https://via.placeholder.com/600'],
         characteristics: formData.characteristics
-      });
+      };
 
-      addToast("Mahsulot muvaffaqiyatli saqlandi!", "success");
+      if (isEdit) {
+        await updateProduct(Number(id), payload);
+        addToast("Mahsulot muvaffaqiyatli yangilandi!", "success");
+      } else {
+        await addProduct(payload);
+        addToast("Mahsulot muvaffaqiyatli saqlandi!", "success");
+      }
       navigate('/products');
     } catch (err) {
       console.error("Save product error:", err);
@@ -143,8 +149,12 @@ export default function ProductCreate() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-white">Yangi Mahsulot</h1>
-            <p className="text-dark-textMuted mt-1">Katalogga yangi soat va xususiyatlarni qo'shish</p>
+            <h1 className="text-2xl font-bold text-white">
+              {isEdit ? "Mahsulotni Tahrirlash" : "Yangi Mahsulot"}
+            </h1>
+            <p className="text-dark-textMuted mt-1">
+              {isEdit ? "Katalogdagi soat ma'lumotlarini yangilash" : "Katalogga yangi soat va xususiyatlarni qo'shish"}
+            </p>
           </div>
         </div>
 

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAppStore } from '../store/useStore';
 import { useUIStore } from '../store/useUIStore';
 import { 
-  ArrowLeft, Copy, Check, Star, Calendar, RefreshCw, Layers, ShieldCheck, ShoppingBag, Eye, X, Maximize2 
+  ArrowLeft, Copy, Check, Star, Calendar, RefreshCw, Layers, ShieldCheck, ShoppingBag, Eye, X, Maximize2, Pencil 
 } from 'lucide-react';
 
 export default function ProductDetails() {
@@ -74,17 +74,26 @@ export default function ProductDetails() {
     <div className="space-y-8 animate-in fade-in duration-500 max-w-6xl mx-auto pb-16">
       
       {/* Header Bar */}
-      <div className="flex items-center gap-3 border-b border-dark-border pb-5">
-        <button
-          onClick={() => navigate('/products')}
-          className="p-2.5 bg-dark-card border border-dark-border text-dark-textMuted hover:text-white rounded-xl transition-all"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <div>
-          <h1 className="text-2xl font-bold text-white">{product.name}</h1>
-          <p className="text-dark-textMuted text-xs mt-1 font-mono">ID: {product.id} • Kategoriya: {product.category}</p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-dark-border pb-5">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate('/products')}
+            className="p-2.5 bg-dark-card border border-dark-border text-dark-textMuted hover:text-white rounded-xl transition-all"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-white">{product.name}</h1>
+            <p className="text-dark-textMuted text-xs mt-1 font-mono">ID: {product.id} • Kategoriya: {product.category}</p>
+          </div>
         </div>
+
+        <button
+          onClick={() => navigate(`/products/edit/${product.id}`)}
+          className="bg-primary-500 hover:bg-primary-600 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-primary-500/15 hover:shadow-primary-500/25 flex items-center gap-2"
+        >
+          <Pencil className="w-4 h-4" /> Tahrirlash
+        </button>
       </div>
 
       {/* Main Grid: Gallery & Info */}
