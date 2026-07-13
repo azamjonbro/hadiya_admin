@@ -30,6 +30,11 @@ export default function ProductEditModal({ product, isOpen, onClose }) {
     characteristics: []
   });
 
+  const cleanNumeric = (val) => {
+    if (val === undefined || val === null) return '';
+    return String(val).replace(/\s/g, '').replace(/UZS/gi, '').replace(/[^\d.]/g, '');
+  };
+
   useEffect(() => {
     if (product) {
       setFormData({
@@ -39,9 +44,9 @@ export default function ProductEditModal({ product, isOpen, onClose }) {
         brand: product.brand || '',
         category: product.category || '',
         categoryId: product.categoryId || 1,
-        price: product.price || '',
-        saleprice: product.saleprice || '',
-        quantity: product.quantity || '',
+        price: cleanNumeric(product.price),
+        saleprice: cleanNumeric(product.saleprice),
+        quantity: cleanNumeric(product.quantity),
         unit: product.unit || 'dona',
         status: product.status || 'Active',
         shortDescription: product.shortDescription || '',
@@ -66,13 +71,16 @@ export default function ProductEditModal({ product, isOpen, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.price || !formData.quantity) {
+    const cleanedPrice = cleanNumeric(formData.price);
+    const cleanedQuantity = cleanNumeric(formData.quantity);
+
+    if (!formData.name || !cleanedPrice || !cleanedQuantity) {
       addToast("Iltimos, majburiy maydonlarni to'ldiring!", "error");
       return;
     }
 
-    const price = Number(formData.price) || 0;
-    const saleprice = Number(formData.saleprice) || 0;
+    const price = Number(cleanedPrice) || 0;
+    const saleprice = Number(cleanNumeric(formData.saleprice)) || 0;
     let salePercent = 0;
     if (saleprice > 0 && saleprice < price) {
       salePercent = Math.round(((price - saleprice) / price) * 100);
@@ -94,7 +102,7 @@ export default function ProductEditModal({ product, isOpen, onClose }) {
         price: String(price),
         saleprice: saleprice ? String(saleprice) : '',
         salePercent: salePercent || 0,
-        quantity: String(formData.quantity),
+        quantity: String(cleanedQuantity),
         unit: formData.unit,
         status: formData.status,
         shortDescription: formData.shortDescription,
