@@ -9,10 +9,10 @@ import {
 export default function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { products } = useAppStore();
+  const { products, loading } = useAppStore();
   const { addToast } = useUIStore();
 
-  const product = products.find(p => p.id === Number(id));
+  const product = products.find(p => Number(p.id) === Number(id));
 
   const BACKEND_URL = 'https://soat.techinfo.uz';
   const resolveImage = (img) => {
@@ -27,6 +27,15 @@ export default function ProductDetails() {
   const [activeTab, setActiveTab] = useState('description'); // 'description' | 'characteristics' | 'gallery' | 'history'
   const [copiedField, setCopiedField] = useState(''); // 'sku' | 'barcode'
   const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  if (loading && products.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-40 gap-4 text-white">
+        <Loader2 className="w-10 h-10 animate-spin text-primary-500" />
+        <p className="text-sm text-dark-textMuted">Mahsulot ma'lumotlari yuklanmoqda...</p>
+      </div>
+    );
+  }
 
   if (!product) {
     return (

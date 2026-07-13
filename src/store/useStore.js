@@ -81,6 +81,7 @@ export const useAppStore = create((set, get) => ({
 
         return {
           ...p,
+          id: Number(p.id),
           images: parsedImages,
           characteristics: parsedSpecs
         };
