@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { UploadCloud, X, ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import { useUIStore } from '../store/useUIStore';
 
